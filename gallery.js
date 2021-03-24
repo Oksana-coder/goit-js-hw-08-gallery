@@ -6,7 +6,7 @@
 
 + Создание и рендер разметки по массиву данных и предоставленному шаблону.
 + Реализация делегирования на галерее ul.js-gallery и получение url большого изображения.
-Открытие модального окна по клику на элементе галереи.
++ Открытие модального окна по клику на элементе галереи.
 Подмена значения атрибута src элемента img.lightbox__image.
 Закрытие модального окна по клику на кнопку button[data-action="close-lightbox"].
 Очистка значения атрибута src элемента img.lightbox__image. Это необходимо для того, 
@@ -40,13 +40,17 @@
 import galleryItems from "./gallery-items.js";
 
 const galleryContainer = document.querySelector('.js-gallery');
+console.log(galleryContainer);
 const modalWindow = document.querySelector('.lightbox');
+console.log(modalWindow);
+
 
 const galleryMarkup = createGalleryCardsMarkup(galleryItems);
 
 galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
 
 galleryContainer.addEventListener('click', onGalleryContainerClick);
+
 
 function createGalleryCardsMarkup(galleryItems) {
     return galleryItems.map(({ preview, original, description }) => {
@@ -70,11 +74,19 @@ function createGalleryCardsMarkup(galleryItems) {
 }
 
 function onGalleryContainerClick(event) {
-    if (!event.target.classList.contains('gallery__item')) {
+
+    if (!event.target.classList.contains('gallery__image')) {
         return;
     }
-    
-    modalWindow.classList.add('is-open');
-    console.log(event.target.dataset.source);
+    return event.target.dataset.source;
 
+}
+
+const galleryElement = document.querySelector('.gallery__item');
+console.log(galleryElement);
+
+galleryElement.addEventListener('click', onGalleryElementClick);
+
+function onGalleryElementClick() {
+    modalWindow.classList.add('is-open');
 }
