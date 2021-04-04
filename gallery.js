@@ -49,8 +49,11 @@ galleryElementsRef.forEach(element => {
 
 function onGalleryElementClick() {
   window.addEventListener('keydown', onEscKeyPress);
+  window.addEventListener('keydown', onRightArrorKeyClick); 
+  window.addEventListener('keydown', onLeftArrowKeyClick);
   modalWindowRef.classList.add('is-open');
   lightboxImageRef.src = onGalleryContainerClick(event);
+
 }
 
 const modalCloseBtnRef = document.querySelector('[data-action="close-lightbox"]');
@@ -61,6 +64,8 @@ lightboxOverlayRef.addEventListener('click', onLightboxOverlayClick);
 
 function onCloseModal() {
   window.removeEventListener('keydown', onEscKeyPress);
+  window.removeEventListener('keydown', onRightArrorKeyClick);
+  window.removeEventListener('keydown', onLeftArrowKeyClick);
   modalWindowRef.classList.remove('is-open');
   lightboxImageRef.src = '';
 }
@@ -77,19 +82,73 @@ function onEscKeyPress(evt) {
   }
 }
 
-/* Additional task - lazy loading */
+/*Slider (it doesn't work properly, the slides jump randomly. I can't get how to fix it :(( ) */
+
+const nextSlideBtnRef = document.querySelector('.next-slide');
+const prevSlideBtnRef = document.querySelector('.prev-slide');
+const allImagesRef = document.querySelectorAll('.gallery__image');
+let index = 0;
+
+nextSlideBtnRef.addEventListener('click', onNextSlideBtnClick);
+prevSlideBtnRef.addEventListener('click', onPrevSlideBtnClick);
+
+function onRightArrorKeyClick(evt) {
+  if (evt.code === "ArrowRight") {
+    onNextSlideBtnClick()
+  }
+}
+
+function onLeftArrowKeyClick(evt) {
+  if (evt.code === "ArrowLeft") {
+    onPrevSlideBtnClick()
+  }
+}
+
+function onNextSlideBtnClick() {
+  if (index === allImagesRef.length - 1) {
+    index = 0;
+  } else {
+    index++;
+  }
+  changeSlide();
+
+}
+
+function onPrevSlideBtnClick() {
+  if (index === 0) {
+    index = allImagesRef.length - 1;
+  } else {
+    index--;
+  }
+  changeSlide();
+}
+
+function changeSlide() {
+  
+  lightboxImageRef.src = allImagesRef[index].dataset.source;
+}
+
+
+/* Lazy loading (Sorry for the preview images quality, didn't know how to get them from pixabay with width of 340px, so used 150px :) ) */
 
 if ('loading' in HTMLImageElement.prototype) {
-  const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-
-  lazyImages.forEach(img => {
-    img.src = img.dataset.src;
-  });
+  addSrcAttrToLazyImages();
 } else {
+  addLazySizesScript();
+}
+function addLazySizesScript() {
   const script = document.createElement('script');
   script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
   script.integrity = 'sha512-q583ppKrCRc7N5O0n2nzUiJ+suUv7Et1JGels4bXOaMFQcamPk9HjdUknZuuFjBNs7tsMuadge5k9RzdmO+1GQ==';
   script.crossOrigin = 'anonymous';
 
   document.body.appendChild(script);
+}
+
+function addSrcAttrToLazyImages() {
+  const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+
+  lazyImages.forEach(img => {
+    img.src = img.dataset.src;
+  });
 }
